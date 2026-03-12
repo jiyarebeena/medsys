@@ -1,62 +1,27 @@
 import express from "express";
-import db from "../config/db.js";
+import {
+  getAllDoctors,
+  getDoctorById,
+  createDoctor,
+  updateDoctor,
+  deleteDoctor
+} from "../controllers/doctorController.js";
 
 const router = express.Router();
 
 // GET all doctors
-router.get("/", (req, res) => {
-  db.query("SELECT * FROM doctor", (err, result) => {
-    if (err) return res.status(500).json({ error: "Database error" });
-    res.json(result);
-  });
-});
+router.get("/", getAllDoctors);
 
 // GET single doctor
-router.get("/:id", (req, res) => {
-  db.query("SELECT * FROM doctor WHERE doctor_id=?", [req.params.id], (err, result) => {
-    if (err) return res.status(500).json({ error: "Database error" });
-    res.json(result);
-  });
-});
+router.get("/:id", getDoctorById);
 
 // ADD doctor
-router.post("/", (req, res) => {
-  const { name, specialization, phone, email } = req.body;
+router.post("/", createDoctor);
 
-  const sql =
-    "INSERT INTO doctor (name, specialization, phone, email) VALUES (?,?,?,?)";
-
-  db.query(sql, [name, specialization, phone, email], (err) => {
-    if (err) {
-      console.log(err);
-      return res.status(500).json({ error: "Insert failed" });
-    }
-
-    res.json({ message: "Doctor added successfully" });
-  });
-});
 // UPDATE doctor
-router.put("/:id", (req, res) => {
-  const { name, specialization, phone } = req.body;
-
-  db.query(
-    "UPDATE doctor SET name=?, specialization=?, phone=? WHERE doctor_id=?",
-    [name, specialization, phone, req.params.id],
-    (err) => {
-      if (err) return res.status(500).json({ error: "Update failed" });
-
-      res.json({ message: "Doctor updated successfully" });
-    }
-  );
-});
+router.put("/:id", updateDoctor);
 
 // DELETE doctor
-router.delete("/:id", (req, res) => {
-  db.query("DELETE FROM doctor WHERE doctor_id=?", [req.params.id], (err) => {
-    if (err) return res.status(500).json({ error: "Delete failed" });
-
-    res.json({ message: "Doctor deleted successfully" });
-  });
-});
+router.delete("/:id", deleteDoctor);
 
 export default router;

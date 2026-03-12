@@ -74,10 +74,15 @@ router.delete("/:id", (req, res) => {
   const sql = "DELETE FROM patient WHERE patient_id=?";
 
   db.query(sql, [req.params.id], (err) => {
-    if (err) return res.status(500).json({ error: "Delete failed" });
+
+    if (err) {
+      console.log(err); // prints error in terminal
+      return res.status(500).json({ error: err.message });
+    }
 
     res.status(200).json({ message: "Patient deleted successfully" });
   });
+
 });
 
 export default router;
